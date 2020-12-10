@@ -1,0 +1,54 @@
+---
+title: "Customer Intelligence Report"
+author: "Madi Kassymbekov HEC ID 11284135"
+date: "12/9/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+source("ClusterAnalysis.R")
+```
+
+## Executive Summary
+
+This customer intelligence report was commissioned to perform an analysis and evaluation of the company's customer base to address the customer retention issues. To better understand the group of customers on which to focus attention of the company to improve retention and whether it is worth it to invest funds in an attempt to retain the customer, it is vital to perform customer segmentation based on their behavior. To perform such an analysis, k-means clustering technique was utilized based on customer's balance and consumption of company's services such as calls, text and data. Thanks to this method, there were clearly defined 4 distinct groups of customers. To get handful insights for later analysis in solving customer retention problem, each of these groups was analyzed through 9 metrics based on median values as average values are susceptible to outliers. These key metrics included phone balance, data consumption, text consumption, calls consumption, age, tenure period, phone payment monthly rate, payment plan and phone price for which plots by cluster can be visually looked upon by the result of Figure 1.
+
+```{r, echo=FALSE, warning=FALSE, out.width="100%" , out.height="80%", fig.align='center'}
+figure1
+```
+
+Based on this clustering technique and visual plots gained for different metrics, there were defined the following four customer groups:
+
+  1. Long-time customers with highest phone balances on account and moderate usage of company's services. Ability to pay is the highest compared       to other groups.
+  2. Long-time customers with lowest phone balances on account and lowest usage of company's services. More senior people compared to the first        group which prefer to use the bare minimum service needed to remain connected and be able to communicate.
+  3. Short-time customers of relatively young audience compared to other groups with high phone balances on account and tremendous usage of          company's services such as data and texts. This group prefers to get the maximum from the company's services available to them.
+  4. Senior customers group with relatively short time usage of company's usage. Except consisting of the most senior customers, group is            highly preferring to call people compared to other groups and moderate usage of other services. The least paying group compared to other        groups based on the preferred contract plans and rates. 
+  
+With defined customer segments, it is possible to measure median annual profit gained from each group which should help identify potential cash cow customer groups. The annual median profit for each group is visually outputted in Figure 2. Groups 3 and 1 are giving the company the most profit group-wise compared to other two groups. It seems not so surprising that group 3 is the most profitable for the company as this is a group of heavy mobile users, while most senior group 4 gives the least annual profit preferring to use phone just as a voice communication tool.
+
+```{r, echo=FALSE, warning=FALSE, out.width="100%" , out.height="80%", fig.align='center'}
+figure2
+```
+&nbsp;
+&nbsp;
+
+In addition to make better understanding on which group of customers the retention department should target to lower the churn rate, the churn percentage per group will be helpful to identify which group is most likely to stop using company's services. Figure 3 output shows that the biggest churn rate is coming from the most senior group 4 (20%), while the most loyal customer group is 1. There can be seen a pattern that most churned groups are with median period less than 48 months or 2 years, so the churn rate is higher for newer customers, while long-time customers are generally less likely to stop using company's service. Group 3 which generates the most annual profit is showing the second highest churn rate even though this group of customers are using all company's services much more frequent and in more volume. 
+
+```{r, echo=FALSE, warning=FALSE, out.width="100%" , out.height="80%", fig.align='center'}
+figure3
+```
+
+To understand why groups 3 and 4 are showing highest churn rates it is vital to analyze the number of technical issues and service interruptions that customers encounter. Figure 4 showcases the median number of service issues per customer group and it is obvious that customer groups 3 and 4 encounter around 2.5 times more services issues than the remaining groups. Due to the previous analysis, we know that group 4 mostly uses phone calls while the group 4 is heavy data and text consumer. Due to the overwhelming amount of these services by these two groups compared to others it can be concluded that current service performance do not fully meet the customers' expectations and therefore there is a clear dependence between the churn rate and the technical service issues that customers encounter.
+```{r, echo=FALSE, warning=FALSE, out.width="100%" , out.height="80%", fig.align='center'}
+figure4
+```
+
+## Suggested Action Plan
+Based on the customer segmentation analysis, the following action plan is suggested to reduce the churn rate and increase the retention rate.
+
+1. Focus on improving data and text services to lower the churn rate for group 3 which is the most profitable customer group per annum.
+2. Focus on improving calls quality and connection stability services to lower the churn rate for group 4 which is highest churn rated group       while not so far behind in terms of profit from group 2.
+3. After improving the service quality, focus marketing campaigns on trying to retain customers from groups 3 and 4.
+
+Following the main suggestion on improving the service quality should lower the overall churn rate among the short-time customers as well as boost loyalty among other customer groups due to significant quality of service improvement and therefore expand the overall loyal customer base in the medium and long term.

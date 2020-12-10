@@ -24,7 +24,6 @@ summary(nopilotset)
 
 head(nopilotset)
 
-paste("The Minimum value is: ",min(nopilotset$period_id)," and the Maximum value is: ",max(nopilotset$period_id))
 #Create tenure group of customers
 CreateGrp <- function(period){
   if (period >= 0 & period <= 12){
@@ -43,11 +42,9 @@ CreateGrp <- function(period){
 nopilotset$GrpTenure = sapply(nopilotset$period_id, CreateGrp)
 nopilotset$GrpTenure = as.factor(nopilotset$GrpTenure)
 
-
-head(nopilotset)
-
 summary(nopilotset)
 
+#Remove NA columns
 nopilotset$voice_minutes = NULL
 nopilotset$time_since_overage = NULL
 nopilotset$time_since_data_overage = NULL
@@ -63,7 +60,7 @@ nopilotset = nopilotset[, -which(names(nopilotset) %in% c("id", "family_id", "pr
 corr_cross(nopilotset, # dataset
            max_pvalue = 0.05, # show only sig. correlations at selected level
            top = 30) # display top 10 correlations, any couples of variables  )
-    
+
 corrmatrix = cor(nopilotset[,numericvar])
 corrmatrix
 corrplot(corrmatrix, main="\n\nCorrelation Plot for Numerical Variables", method="number")
@@ -85,7 +82,6 @@ createplot <- function(dst, column, name) {
   return(plt)
 }
 
-
 # Plot 1 by gender 
 p1 <- createplot(nopilotset, nopilotset$gender, "Gender")                      
 p3 <- createplot(nopilotset, nopilotset$unlimited_voice, "unlimited_voice")
@@ -94,22 +90,18 @@ p4 <- createplot(nopilotset, nopilotset$plan_type, "plan_type")
 # plot 5 by workphone
 p5 <- createplot(nopilotset, nopilotset$workphone, "workphone")
 
-
 # draw the plot grid
 grid.arrange(p1,p3, p4, p5, ncol=4)
 
 #Percentage of missing data
 sapply(nopilotset[,-c(2)], function(x) round((sum(is.na(x))/length(x)*100),2))
 
-#Factorize target
+#Factorize categories
 nopilotset$churn_in_12 = factor(nopilotset$churn_in_12)
-
 nopilotset$plan_type <- factor(nopilotset$plan_type)
 nopilotset$gender <- factor(nopilotset$gender)
 nopilotset$workphone <- factor(nopilotset$workphone)
 nopilotset$unlimited_voice <- factor(nopilotset$unlimited_voice)
-
-
 
 str(nopilotset)
 summary(nopilotset)
@@ -139,20 +131,14 @@ trainX <- TrainModel[,names(TrainModel) != "churn_in_12"]
 preProcValues <- preProcess(x = trainX,method = c("center", "scale"))
 preProcValues
 
-#Logistic Regression
-logit=glm(formula=churn_in_12~. ,
-       data=TrainModel,family="binomial")
-summary(logit)
 
 cl <- makePSOCKcluster(10)
 registerDoParallel(cl)
-
 
 # Gradient Boost Machine (GBM)
 set.seed(7)
 fit.gbm <- train(churn_in_12 ~ ., data=TrainModel, method="gbm", 
                  metric=metric, trControl=control, verbose=FALSE, preProc = c("center", "scale"))
-
 
 stopCluster(cl)
 
@@ -166,8 +152,7 @@ AccCalc <- function(TestFit, name) {
   # prediction 
   DstTestModelClean <- TestModel
   DstTestModelClean$churn_in_12 <- NA
-  resptype <- ifelse(name == "glm", "response", "prob")
-  predictedval <- predict(TestFit, newdata=DstTestModelClean, type=resptype)
+  predictedval <- predict(TestFit, newdata=DstTestModelClean, type="prob")
   # summarize results with confusion matrix
   cm <- confusionMatrix(predictedval, TestModel$churn_in_12)
   
@@ -182,12 +167,11 @@ AccCalc <- function(TestFit, name) {
   return(acc)
 }
 
-accAll <-AccCalc(logit, "glm")
-accAll <- rbind(accAll, AccCalc(fit.gbm, "gbm"))
+accAll <-AccCalc(fit.gbm, "gbm")
 rownames(accAll) <- c()
 arrange(accAll,desc(Accuracy))
 
-
+#Prediction for dataset
 TESTDIR = "C:\\Users\\User\\Desktop\\R_Projects\\ClientRetention\\Data\\score_student_withID.csv"
 
 testdata = read.csv(TESTDIR)
@@ -209,15 +193,10 @@ testdata$churn_hutp <- predict(fit.gbm, newdata = testdata, type="prob")
 
 head(testdata)
 
-#Logit
-testdata$churn_hutp <- predict(logit, newdata = testdata, type="response")
-
 #Threshold classification
 testdata$churn_hut <- ifelse(testdata$churn_hutp$True > 0.19, "True", "False")
 testdata$churn_hut <- factor(testdata$churn_hut)
 summary(testdata)
 
-
 result <- testdata$unique_family[testdata$churn_hut=="True"]
 write.csv(result,"C:\\Users\\User\\Desktop\\R_Projects\\ClientRetention\\Data\\Result.csv", row.names = FALSE)
-
